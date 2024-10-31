@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Parcial2DS4
 {
-    public partial class Form1 : Form
+    public partial class ReporteMontoPorProvincia : Form
     {
-        public Form1()
+        public ReporteMontoPorProvincia()
         {
             InitializeComponent();
         }
