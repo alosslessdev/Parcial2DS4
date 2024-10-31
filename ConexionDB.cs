@@ -18,84 +18,119 @@ namespace Parcial2DS4
 {
     internal class ConexionDB
     {
-        private string detallesConexion = "Data Source=localhost;Initial Catalog=Hotel_otaku;Integrated Security=True";
+        private string detallesConexion = "Data Source=localhost;Initial Catalog=GestionClientesDB;Integrated Security=True";
 
-        // Método para crear una nueva reserva
-        public void CrearReserva(string nombre, string tipoHabitacion, DateTime fechaEntrada, DateTime fechaSalida)
+        // Método para obtener la cantidad de clientes por provincia
+        // Problema 1
+
+        public DataTable ObtenerCantidadClientesPorProvincia()
         {
+            DataTable datos = new DataTable();
             try
             {
                 using (SqlConnection connection = new SqlConnection(detallesConexion))
                 {
-                    SqlCommand command = new SqlCommand("CrearReserva", connection);
+                    SqlCommand command = new SqlCommand("ContarClientesPorProvincia", connection);
                     command.CommandType = CommandType.StoredProcedure;
 
-                    // Agregar los parámetros del procedimiento
-                    command.Parameters.AddWithValue("@nombre", nombre);
-                    command.Parameters.AddWithValue("@tipo_habitacion", tipoHabitacion);
-                    command.Parameters.AddWithValue("@fecha_entrada", fechaEntrada);
-                    command.Parameters.AddWithValue("@fecha_salida", fechaSalida);
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    adapter.Fill(datos);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener cantidad de clientes por provincia: " + ex.Message);
+            }
+            return datos;
+        }
+
+        // Método para obtener el total de compras por provincia
+        // Problema 2
+        public DataTable ObtenerTotalComprasPorProvincia()
+        {
+            DataTable datos = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(detallesConexion))
+                {
+                    SqlCommand command = new SqlCommand("TotalComprasPorProvincia", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    adapter.Fill(datos);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener total de compras por provincia: " + ex.Message);
+            }
+            return datos;
+        }
 
 
-                    // Abrir la conexión y ejecutar el procedimiento almacenado
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                    MessageBox.Show("Reserva insertada con exito para: " + nombre);
+        // Método para obtener todas las provincias y sus clientes
+        // Problema 3
+        public DataTable ObtenerClientesPorTodasProvincias()
+        {
+            DataTable datos = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(detallesConexion))
+                {
+                    SqlCommand command = new SqlCommand("ListadoClientesConVentas", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Provincia", DBNull.Value);  // Sin filtro, muestra todas las provincias
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    adapter.Fill(datos);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al obtener clientes de todas las provincias: " + ex.Message);
+            }
+            return datos;
+        }
+
+        // Método para obtener clientes de una provincia específica
+        // Problema 3
+        public DataTable ObtenerClientesPorProvincia(string provincia)
+        {
+            DataTable datos = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(detallesConexion))
+                {
+                    SqlCommand command = new SqlCommand("ListadoClientesConVentas", connection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Provincia", provincia);  // Filtro por provincia específica
+
+                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    adapter.Fill(datos);
 
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al insertar la reserva: " + ex.Message);
-            }
-        }
-
-        // Método para obtener todas las reservas existentes
-        internal DataSet ObtenerDatos(int tipo)
-        {
-            DataSet datos = new DataSet();
-            try
-            {
-                using (SqlConnection conexion = new SqlConnection(detallesConexion))
-                {
-                    switch (tipo)
-                    {
-
-                        case 0:
-                            string query = "SELECT id_reserva, nombre, habitacion, fecha_entrada, fecha_salida," +
-                                " monto_total FROM [Hotel_otaku].[dbo].[Reservas]";
-                            SqlDataAdapter adaptador = new SqlDataAdapter(query, conexion);
-                            adaptador.Fill(datos, "Reservas");
-                            break;
-                        case 1:
-                            query = "SELECT id_reserva, nombre, habitacion, fecha_entrada, fecha_salida," +
-                              " monto_total FROM [Hotel_otaku].[dbo].[Reservas] WHERE Habitacion = 'Suite'";
-                            adaptador = new SqlDataAdapter(query, conexion);
-                            adaptador.Fill(datos, "Reservas");
-                            break;
-                        case 2:
-                            query = "SELECT id_reserva, nombre, habitacion, fecha_entrada, fecha_salida," +
-                              " monto_total FROM [Hotel_otaku].[dbo].[Reservas] WHERE Habitacion = 'Doble'";
-                            adaptador = new SqlDataAdapter(query, conexion);
-                            adaptador.Fill(datos, "Reservas");
-                            break;
-                        case 3:
-                            query = "SELECT id_reserva, nombre, habitacion, fecha_entrada, fecha_salida," +
-                              " monto_total FROM [Hotel_otaku].[dbo].[Reservas] WHERE Habitacion = 'Individual'";
-                            adaptador = new SqlDataAdapter(query, conexion);
-                            adaptador.Fill(datos, "Reservas");
-                            break;
-                        default:
-                            break;
-
-                    }
-                }
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Error al obtener libros: " + ex.Message);
+                MessageBox.Show("Error al obtener clientes por provincia: " + ex.Message);
             }
             return datos;
         }
+
+        // Método para mostrar todos los clientes por provincia en un DataGridView
+        public void MostrarClientesPorProvinciaEnDataGridView(DataGridView dgv, string provincia = null)
+        {
+            DataTable datos;
+            if (string.IsNullOrEmpty(provincia))
+            {
+                datos = ObtenerClientesPorTodasProvincias();  // Sin filtro, muestra todas las provincias
+            }
+            else
+            {
+                datos = ObtenerClientesPorProvincia(provincia);  // Filtra por la provincia seleccionada
+            }
+            dgv.DataSource = datos;
+        }
+                    
     }
 }

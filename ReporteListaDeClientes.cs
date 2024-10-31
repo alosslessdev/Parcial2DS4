@@ -9,37 +9,45 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
+/*
+ * Carrasco, Nathan
+ * Herrera, Francisco
+ * Wu, Iván
+ */
+
 namespace Parcial2DS4
 {
     public partial class ReporteListaDeClientes : Form
     {
+        private ConexionDB conexionDB;
         public ReporteListaDeClientes()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void comboboxFiltrar_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.Hide();
-        }
+            conexionDB = new ConexionDB();
+            DataTable datos;
 
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ConexionDB conexionDB = new ConexionDB();
-            DataSet datos = conexionDB.ObtenerDatos(comboBox1.SelectedIndex);
-            dataGridView1.DataSource = datos.Tables["Reservas"];
-            decimal montoTotal = 0m;
-
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            // Índice 0 muestra todos los datos
+            if (comboBoxFiltrar.SelectedIndex == 0)
             {
-                montoTotal += (decimal)row.Cells[5].Value; // Poner una opcion en blanco en el combobox por default para la primera fila
+                datos = conexionDB.ObtenerClientesPorTodasProvincias();
+                dataGridViewListaClientes.DataSource = datos; // Obtener datos de todas las provincias
+            }
+            else
+            {
+                // Obtiene los datos de la provincia específica usando el índice del ComboBox (1 a 5)
+                datos = conexionDB.ObtenerClientesPorProvincia(comboBoxFiltrar.Text);
+                dataGridViewListaClientes.DataSource = datos;
             }
 
-            labelVariableMonto.Text = Convert.ToString(montoTotal);
+            dataGridViewListaClientes.DataSource = datos;            
+
         }
 
-
     }
-
 }
+
