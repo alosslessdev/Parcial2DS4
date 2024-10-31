@@ -71,7 +71,7 @@
             this.Controls.Add(this.comboBoxFiltrar);
             this.Controls.Add(this.dataGridViewListaClientes);
             this.Name = "ReporteListaDeClientes";
-            this.Text = "ReporteListaDeClientes";
+            this.Text = "Reporte Lista De Clientes";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewListaClientes)).EndInit();
             this.ResumeLayout(false);
 

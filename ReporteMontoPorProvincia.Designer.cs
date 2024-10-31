@@ -65,7 +65,7 @@
             this.Controls.Add(this.btnMostrarMontoProvincia);
             this.Controls.Add(this.dataGridViewMontoProvincia);
             this.Name = "ReporteMontoPorProvincia";
-            this.Text = "ReporteMontoPorProvincia";
+            this.Text = "Reporte Monto Por Provincia";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMontoProvincia)).EndInit();
             this.ResumeLayout(false);
 

@@ -100,7 +100,7 @@ namespace Parcial2DS4
             this.Controls.Add(this.btnMontoProvincia);
             this.Controls.Add(this.dataGridViewClientesProvincia);
             this.Name = "ReporteClientesPorProvincia";
-            this.Text = "ReporteClientesPorProvincia";
+            this.Text = "Reporte Clientes Por Provincia";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewClientesProvincia)).EndInit();
             this.ResumeLayout(false);
 
